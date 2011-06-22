@@ -33,6 +33,7 @@
 
 namespace HPHP {
 ///////////////////////////////////////////////////////////////////////////////
+String get_static_class_name(CVarRef objOrClassName);
 
 class ArrayIter;
 class MutableArrayIter;
@@ -612,6 +613,18 @@ class Variant {
    */
   static const char *getTypeString(DataType type);
   std::string getDebugDump() const;
+
+  /** Type detector */
+  String getTypeName() const {
+    if (is(KindOfObject)) {
+      Variant v = *this;
+      return get_static_class_name(v);
+    } else {
+      // TODO: more detail for arrays
+      // TODO: closures
+      return Variant::getTypeString(getType());
+    }
+  }
 
   /**
    * Memory allocator methods.

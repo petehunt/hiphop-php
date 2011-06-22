@@ -315,6 +315,9 @@ void FunctionStatement::directBind(VariableEnvironment &env,
   const vector<ExpressionPtr> &args = caller->params();
   vector<ExpressionPtr>::const_iterator it = args.begin() + start;
   VariantStack &as = RequestEvalState::argStack();
+  cout << "directBind()" << endl;
+  caller->dumpLoc();
+  cout << endl << "arguments:" << endl;
   for (; it != args.end() && piter != m_params.end(); ++it, ++piter) {
     Variant v;
     if ((*piter)->isRef() || (*it)->isRefParam()) {
@@ -324,6 +327,7 @@ void FunctionStatement::directBind(VariableEnvironment &env,
       as.pushRef(v);
     } else {
       v = (*it)->eval(env);
+      cout << v.getTypeName() << endl;
       (*piter)->bind(fenv, v);
       as.push(v);
     }
@@ -404,7 +408,11 @@ Variant FunctionStatement::directInvoke(VariableEnvironment &env,
   if (m_ref) {
     return strongBind(evalBody(fenv));
   } else {
-    return evalBody(fenv);
+    Variant rv = evalBody(fenv);
+    cout << "returning value" << endl;
+    caller->dumpLoc();
+    cout << endl << rv.getTypeName() << endl;
+    return rv;
   }
 }
 
